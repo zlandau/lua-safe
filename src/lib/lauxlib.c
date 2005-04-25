@@ -21,6 +21,7 @@
 #include "lua.h"
 
 #include "lauxlib.h"
+#include "luasafe.h"
 
 
 /* number of prereserved references (for internal use) */
@@ -494,6 +495,7 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   }
   else {
     lua_pushfstring(L, "@%s", filename);
+    SAFE_CHECK_LOAD(L, 1);
     lf.f = fopen(filename, "r");
   }
   if (lf.f == NULL) return errfile(L, fnameindex);  /* unable to open file */

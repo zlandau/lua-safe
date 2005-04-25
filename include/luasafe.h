@@ -9,8 +9,11 @@
 #define SAFE_UNTAINT(o)         ((o)->tainted = 0)
 #define SAFE_IS_TAINTED(o)      ((o)->tainted == 1)
 
+extern void safe_check_load (lua_State *L, int idx);
+
 #define SAFE_CHECK_EXECUTE(L, idx) \
     {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 3) \
          luaL_error(L, "safety violation: cannot execute tainted value");}
-
+#define SAFE_CHECK_LOAD(L, idx) \
+    safe_check_load(L, idx);
 #endif
