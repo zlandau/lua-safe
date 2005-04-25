@@ -22,6 +22,7 @@
 #include "lgc.h"
 #include "lobject.h"
 #include "lopcodes.h"
+#include "lsafe.h"
 #include "lstate.h"
 #include "lstring.h"
 #include "ltable.h"
@@ -483,6 +484,7 @@ StkId luaV_execute (lua_State *L) {
         break;
       }
       case OP_SETGLOBAL: {
+        _SAFE_CHECK_ASSIGN(L, ra);
         lua_assert(ttisstring(KBx(i)) && ttistable(&cl->g));
         luaV_settable(L, &cl->g, KBx(i), ra);
         break;
