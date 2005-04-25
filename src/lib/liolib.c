@@ -191,6 +191,8 @@ static int io_tostring (lua_State *L) {
 static int io_open (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
+  SAFE_CHECK_FILE_DATA(L, 1);
+  SAFE_CHECK_FILE_DATA(L, 2);
   FILE **pf = newfile(L);
   *pf = fopen(filename, mode);
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
@@ -204,6 +206,8 @@ static int io_popen (lua_State *L) {
 #else
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
+  SAFE_CHECK_FILE_DATA(L, 1);
+  SAFE_CHECK_FILE_DATA(L, 2);
   FILE **pf = newfile(L);
   *pf = popen(filename, mode);
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
@@ -213,6 +217,7 @@ static int io_popen (lua_State *L) {
 
 static int io_tmpfile (lua_State *L) {
   FILE **pf = newfile(L);
+  SAFE_CHECK_FILE_MOD(L);
   *pf = tmpfile();
   return (*pf == NULL) ? pushresult(L, 0, NULL) : 1;
 }
