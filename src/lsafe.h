@@ -14,10 +14,10 @@
 #define SAFE_IS_TAINTED(o)      ((o)->tainted == 1)
 
 #define _SAFE_CHECK_ASSIGN(L, o) \
-    {if (SAFE_IS_TAINTED(o) && L->safelevel >= 5) \
+    {if (SAFE_IS_TAINTED(o) && L->safelevel >= 4) \
         luaG_runerror(L, "safety violation: cannot assign tainted value");}
 #define _SAFE_TAINT_ASSIGN(L, o) \
-    {if (L->safelevel >= 5) \
+    {if (L->safelevel >= 4) \
         SAFE_TAINT(o);}
 #define _SAFE_ALLOW_TAINT(L) \
     {if (L->safelevel >= 4) \
