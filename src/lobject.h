@@ -63,6 +63,7 @@ typedef union {
 typedef struct lua_TObject {
   int tt;
   Value value;
+  int tainted;
 } TObject;
 
 
@@ -93,40 +94,45 @@ typedef struct lua_TObject {
 
 /* Macros to set values */
 #define setnvalue(obj,x) \
-  { TObject *i_o=(obj); i_o->tt=LUA_TNUMBER; i_o->value.n=(x); }
+  { TObject *i_o=(obj); i_o->tt=LUA_TNUMBER; i_o->value.n=(x); i_o->tainted = 0; }
 
 #define chgnvalue(obj,x) \
 	check_exp(ttype(obj)==LUA_TNUMBER, (obj)->value.n=(x))
 
 #define setpvalue(obj,x) \
-  { TObject *i_o=(obj); i_o->tt=LUA_TLIGHTUSERDATA; i_o->value.p=(x); }
+  { TObject *i_o=(obj); i_o->tt=LUA_TLIGHTUSERDATA; i_o->value.p=(x); i_o->tainted = 0; }
 
 #define setbvalue(obj,x) \
-  { TObject *i_o=(obj); i_o->tt=LUA_TBOOLEAN; i_o->value.b=(x); }
+  { TObject *i_o=(obj); i_o->tt=LUA_TBOOLEAN; i_o->value.b=(x); i_o->tainted = 0; }
 
 #define setsvalue(obj,x) \
   { TObject *i_o=(obj); i_o->tt=LUA_TSTRING; \
     i_o->value.gc=cast(GCObject *, (x)); \
+    i_o->tainted = 0; \
     lua_assert(i_o->value.gc->gch.tt == LUA_TSTRING); }
 
 #define setuvalue(obj,x) \
   { TObject *i_o=(obj); i_o->tt=LUA_TUSERDATA; \
     i_o->value.gc=cast(GCObject *, (x)); \
+    i_o->tainted = 0; \
     lua_assert(i_o->value.gc->gch.tt == LUA_TUSERDATA); }
 
 #define setthvalue(obj,x) \
   { TObject *i_o=(obj); i_o->tt=LUA_TTHREAD; \
     i_o->value.gc=cast(GCObject *, (x)); \
+    i_o->tainted = 0; \
     lua_assert(i_o->value.gc->gch.tt == LUA_TTHREAD); }
 
 #define setclvalue(obj,x) \
   { TObject *i_o=(obj); i_o->tt=LUA_TFUNCTION; \
     i_o->value.gc=cast(GCObject *, (x)); \
+    i_o->tainted = 0; \
     lua_assert(i_o->value.gc->gch.tt == LUA_TFUNCTION); }
 
 #define sethvalue(obj,x) \
   { TObject *i_o=(obj); i_o->tt=LUA_TTABLE; \
     i_o->value.gc=cast(GCObject *, (x)); \
+    i_o->tainted = 0; \
     lua_assert(i_o->value.gc->gch.tt == LUA_TTABLE); }
 
 #define setnilvalue(obj) ((obj)->tt=LUA_TNIL)
@@ -143,7 +149,8 @@ typedef struct lua_TObject {
 #define setobj(obj1,obj2) \
   { const TObject *o2=(obj2); TObject *o1=(obj1); \
     checkconsistency(o2); \
-    o1->tt=o2->tt; o1->value = o2->value; }
+    o1->tt=o2->tt; o1->value = o2->value; \
+    o1->tainted = o2->tainted; }
 
 
 /*

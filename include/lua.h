@@ -207,6 +207,12 @@ LUA_API int   lua_getgcthreshold (lua_State *L);
 LUA_API int   lua_getgccount (lua_State *L);
 LUA_API void  lua_setgcthreshold (lua_State *L, int newthreshold);
 
+/* Safe functions */
+LUA_API void  lua_setsafelevel (lua_State *L, int level);
+LUA_API int   lua_getsafelevel (lua_State *L);
+LUA_API void  lua_settaint (lua_State *L, int idx, int taint);
+LUA_API int   lua_gettaint (lua_State *L, int idx);
+
 /*
 ** miscellaneous functions
 */

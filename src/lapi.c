@@ -19,6 +19,7 @@
 #include "lgc.h"
 #include "lmem.h"
 #include "lobject.h"
+#include "lsafe.h"
 #include "lstate.h"
 #include "lstring.h"
 #include "ltable.h"
@@ -920,3 +921,45 @@ LUA_API const char *lua_setupvalue (lua_State *L, int funcindex, int n) {
   return name;
 }
 
+
+LUA_API void lua_setsafelevel (lua_State *L, int level) {
+  lua_lock(L);
+  if (L->safelevel <= level)
+    L->safelevel = level;
+  else
+    luaG_runerror(L, "safety violation: unable to lower safety level");
+  lua_unlock(L);
+}
+
+
+LUA_API int lua_getsafelevel (lua_State *L) {
+  int ret;
+  lua_lock(L);
+  ret = L->safelevel;
+  lua_unlock(L);
+  return ret;
+}
+
+LUA_API void lua_settaint (lua_State *L, int idx, int taint) {
+  StkId t;
+  lua_lock(L);
+  t = luaA_index(L, idx);
+  if (taint)
+    SAFE_TAINT(t);
+  else
+    SAFE_UNTAINT(t);
+  L->top -= 2;
+  luaA_pushobject(L, t);
+  lua_unlock(L);
+}
+
+
+LUA_API int lua_gettaint (lua_State *L, int idx) {
+  StkId t;
+  int ret;
+  lua_lock(L);
+  t = luaA_index(L, idx);
+  ret = SAFE_IS_TAINTED(t);
+  lua_unlock(L);
+  return ret;
+}

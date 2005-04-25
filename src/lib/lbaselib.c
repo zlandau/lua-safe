@@ -199,6 +199,33 @@ static int luaB_collectgarbage (lua_State *L) {
 }
 
 
+static int luaB_setsafelevel (lua_State *L) {
+  luaL_checktype(L, 1, LUA_TNUMBER);
+  lua_setsafelevel(L, (int)lua_tonumber(L, 1));
+  return 0;
+}
+
+
+static int luaB_getsafelevel (lua_State *L) {
+  lua_pushnumber(L, lua_getsafelevel(L));
+  return 1;
+}
+
+static int luaB_taint (lua_State *L) {
+  lua_settaint(L, 1, 1); 
+  return 1;
+}
+
+static int luaB_untaint (lua_State *L) {
+  lua_settaint(L, 1, 0); 
+  return 1;
+}
+
+static int luaB_istainted (lua_State *L) {
+  lua_pushboolean(L, lua_gettaint(L, 1));
+  return 1;
+}
+
 static int luaB_type (lua_State *L) {
   luaL_checkany(L, 1);
   lua_pushstring(L, lua_typename(L, lua_type(L, 1)));
@@ -527,6 +554,11 @@ static const luaL_reg base_funcs[] = {
   {"xpcall", luaB_xpcall},
   {"collectgarbage", luaB_collectgarbage},
   {"gcinfo", luaB_gcinfo},
+  {"setsafelevel", luaB_setsafelevel},
+  {"getsafelevel", luaB_getsafelevel},
+  {"taint", luaB_taint},
+  {"untaint", luaB_untaint},
+  {"istainted", luaB_istainted},
   {"loadfile", luaB_loadfile},
   {"dofile", luaB_dofile},
   {"loadstring", luaB_loadstring},
