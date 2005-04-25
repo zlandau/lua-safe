@@ -59,6 +59,7 @@ SRCS=	\
 	lobject.h \
 	lopcodes.h \
 	lparser.h \
+	lsafe.h \
 	lstate.h \
 	lstring.h \
 	ltable.h \
