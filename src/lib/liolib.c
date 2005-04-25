@@ -18,6 +18,7 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
+#include "luasafe.h"
 
 
 
@@ -540,6 +541,7 @@ static void createmeta (lua_State *L) {
 */
 
 static int io_execute (lua_State *L) {
+  SAFE_CHECK_EXECUTE(L, 1);
   lua_pushnumber(L, system(luaL_checkstring(L, 1)));
   return 1;
 }
