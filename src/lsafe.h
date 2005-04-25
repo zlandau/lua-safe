@@ -19,5 +19,10 @@
 #define _SAFE_TAINT_ASSIGN(L, o) \
     {if (L->safelevel >= 5) \
         SAFE_TAINT(o);}
-
+#define _SAFE_ALLOW_TAINT(L) \
+    {if (L->safelevel >= 4) \
+        luaG_runerror(L, "safety violation: cannot taint values");}
+#define _SAFE_ALLOW_UNTAINT(L) \
+    {if (L->safelevel >= 3) \
+        luaG_runerror(L, "safety violation: cannot untaint values");}
 #endif

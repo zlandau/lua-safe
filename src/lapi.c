@@ -944,10 +944,13 @@ LUA_API void lua_settaint (lua_State *L, int idx, int taint) {
   StkId t;
   lua_lock(L);
   t = luaA_index(L, idx);
-  if (taint)
+  if (taint) {
+    _SAFE_ALLOW_TAINT(L);
     SAFE_TAINT(t);
-  else
+  } else {
+    _SAFE_ALLOW_UNTAINT(L);
     SAFE_UNTAINT(t);
+  }
   L->top -= 2;
   luaA_pushobject(L, t);
   lua_unlock(L);
