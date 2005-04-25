@@ -363,6 +363,7 @@ static int g_read (lua_State *L, FILE *f, int first) {
   int nargs = lua_gettop(L) - 1;
   int success;
   int n;
+  int i;
   if (nargs == 0) {  /* no arguments? */
     success = read_line(L, f);
     n = first+1;  /* to return 1 result */
@@ -401,6 +402,8 @@ static int g_read (lua_State *L, FILE *f, int first) {
     lua_pop(L, 1);  /* remove last result */
     lua_pushnil(L);  /* push nil instead */
   }
+  for (i=n-first; i > 0; i--)
+    lua_settaint(L, -i, 1);
   return n - first;
 }
 
@@ -571,6 +574,7 @@ static int io_tmpname (lua_State *L) {
 
 static int io_getenv (lua_State *L) {
   lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+  lua_settaint(L, -1, 1);
   return 1;
 }
 
