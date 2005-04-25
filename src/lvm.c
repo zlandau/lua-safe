@@ -441,10 +441,12 @@ StkId luaV_execute (lua_State *L) {
       }
       case OP_LOADK: {
         setobj2s(ra, KBx(i));
+        _SAFE_TAINT_ASSIGN(L, ra);
         break;
       }
       case OP_LOADBOOL: {
         setbvalue(ra, GETARG_B(i));
+	_SAFE_TAINT_ASSIGN(L, ra);
         if (GETARG_C(i)) pc++;  /* skip next instruction (if C) */
         break;
       }
@@ -502,6 +504,7 @@ StkId luaV_execute (lua_State *L) {
         int b = GETARG_B(i);
         b = fb2int(b);
         sethvalue(ra, luaH_new(L, b, GETARG_C(i)));
+	_SAFE_TAINT_ASSIGN(L, ra);
         luaC_checkGC(L);
         break;
       }

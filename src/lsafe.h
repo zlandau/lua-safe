@@ -16,5 +16,8 @@
 #define _SAFE_CHECK_ASSIGN(L, o) \
     {if (SAFE_IS_TAINTED(o) && L->safelevel >= 5) \
         luaG_runerror(L, "safety violation: cannot assign tainted value");}
+#define _SAFE_TAINT_ASSIGN(L, o) \
+    {if (L->safelevel >= 5) \
+        SAFE_TAINT(o);}
 
 #endif
