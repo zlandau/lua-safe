@@ -159,6 +159,7 @@ static int aux_close (lua_State *L) {
 
 
 static int io_close (lua_State *L) {
+  SAFE_CHECK_FILE_MOD(L);
   if (lua_isnone(L, 1) && lua_type(L, lua_upvalueindex(1)) == LUA_TTABLE) {
     lua_pushstring(L, IO_OUTPUT);
     lua_rawget(L, lua_upvalueindex(1));
@@ -440,6 +441,7 @@ static int io_readline (lua_State *L) {
 static int g_write (lua_State *L, FILE *f, int arg) {
   int nargs = lua_gettop(L) - 1;
   int status = 1;
+  SAFE_CHECK_FILE_MOD(L);
   for (; nargs--; arg++) {
     if (lua_type(L, arg) == LUA_TNUMBER) {
       /* optimization: could be done exactly as for strings */
@@ -472,6 +474,7 @@ static int f_seek (lua_State *L) {
   FILE *f = tofile(L, 1);
   int op = luaL_findstring(luaL_optstring(L, 2, "cur"), modenames);
   long offset = luaL_optlong(L, 3, 0);
+  SAFE_CHECK_FILE_MOD(L);
   luaL_argcheck(L, op != -1, 2, "invalid mode");
   op = fseek(f, offset, mode[op]);
   if (op)
@@ -484,11 +487,13 @@ static int f_seek (lua_State *L) {
 
 
 static int io_flush (lua_State *L) {
+  SAFE_CHECK_FILE_MOD(L);
   return pushresult(L, fflush(getiofile(L, IO_OUTPUT)) == 0, NULL);
 }
 
 
 static int f_flush (lua_State *L) {
+  SAFE_CHECK_FILE_MOD(L);
   return pushresult(L, fflush(tofile(L, 1)) == 0, NULL);
 }
 
@@ -549,6 +554,7 @@ static int io_execute (lua_State *L) {
 
 static int io_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
+  SAFE_CHECK_FILE_MOD(L);
   return pushresult(L, remove(filename) == 0, filename);
 }
 
@@ -556,6 +562,7 @@ static int io_remove (lua_State *L) {
 static int io_rename (lua_State *L) {
   const char *fromname = luaL_checkstring(L, 1);
   const char *toname = luaL_checkstring(L, 2);
+  SAFE_CHECK_FILE_MOD(L);
   return pushresult(L, rename(fromname, toname) == 0, fromname);
 }
 
@@ -566,6 +573,7 @@ static int io_tmpname (lua_State *L) {
   return 0;
 #else
   char buff[L_tmpnam];
+  SAFE_CHECK_FILE_MOD(L);
   if (tmpnam(buff) != buff)
     return luaL_error(L, "unable to generate a unique filename in `tmpname'");
   lua_pushstring(L, buff);
@@ -719,6 +727,7 @@ static int io_setloc (lua_State *L) {
 
 
 static int io_exit (lua_State *L) {
+  SAFE_CHECK_OS_EXIT(L);
   exit(luaL_optint(L, 1, EXIT_SUCCESS));
   return 0;  /* to avoid warnings */
 }
