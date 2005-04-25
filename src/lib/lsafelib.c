@@ -18,8 +18,6 @@ static int safe_check_world_writable(lua_State *L, int idx) {
 }
 
 LUALIB_API void safe_check_load (lua_State *L, int idx) {
-  int level = lua_getsafelevel(L);
-
   if (lua_gettaint(L, idx)) { 
     switch (lua_getsafelevel(L)) { 
       case 4: 
