@@ -9,9 +9,10 @@
 #include "lua.h"
 
 
-#define SAFE_TAINT(o)           ((o)->tainted = 1)
-#define SAFE_UNTAINT(o)         ((o)->tainted = 0)
-#define SAFE_IS_TAINTED(o)      ((o)->tainted == 1)
+#define SAFE_TAINT(o)                ((o)->tainted = 1)
+#define SAFE_UNTAINT(o)              ((o)->tainted = 0)
+#define SAFE_IS_TAINTED(o)           ((o)->tainted == 1)
+#define SAFE_IS_TAINTED_TWO(o1, o2)  (SAFE_IS_TAINTED(o1) || SAFE_IS_TAINTED(o2))
 
 #define _SAFE_CHECK_ASSIGN(L, o) \
     {if (SAFE_IS_TAINTED(o) && L->safelevel >= 4) \

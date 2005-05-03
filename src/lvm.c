@@ -312,8 +312,25 @@ int luaV_equalval (lua_State *L, const TObject *t1, const TObject *t2) {
   return !l_isfalse(L->top);
 }
 
+static int has_tainted (lua_State *L, int total, int last)
+{
+  int ret = 0;
+
+  do {
+    StkId top = L->base + last;
+    if (SAFE_IS_TAINTED(top)) {
+      ret = 1;
+      break;
+    }
+    total--;
+    last--;
+  } while (total > 0);
+
+  return ret;
+}
 
 void luaV_concat (lua_State *L, int total, int last) {
+  int do_taint = has_tainted(L, total, last);
   do {
     StkId top = L->base + last + 1;
     int n = 2;  /* number of elements handled in this pass (at least 2) */
@@ -339,6 +356,8 @@ void luaV_concat (lua_State *L, int total, int last) {
         tl += l;
       }
       setsvalue2s(top-n, luaS_newlstr(L, buffer, tl));
+      if (do_taint)
+        SAFE_TAINT(top-n);
     }
     total -= n-1;  /* got `n' strings to create 1 new */
     last -= n-1;
@@ -526,45 +545,60 @@ StkId luaV_execute (lua_State *L) {
       case OP_ADD: {
         TObject *rb = RKB(i);
         TObject *rc = RKC(i);
+        int taint = SAFE_IS_TAINTED_TWO(rb, rc);
         if (ttisnumber(rb) && ttisnumber(rc)) {
           setnvalue(ra, nvalue(rb) + nvalue(rc));
         }
         else
           Arith(L, ra, rb, rc, TM_ADD);
+        if (taint)
+          SAFE_TAINT(ra);
         break;
       }
       case OP_SUB: {
         TObject *rb = RKB(i);
         TObject *rc = RKC(i);
+        int taint = SAFE_IS_TAINTED_TWO(rb, rc);
         if (ttisnumber(rb) && ttisnumber(rc)) {
           setnvalue(ra, nvalue(rb) - nvalue(rc));
         }
         else
           Arith(L, ra, rb, rc, TM_SUB);
+        if (taint)
+          SAFE_TAINT(ra);
         break;
       }
       case OP_MUL: {
         TObject *rb = RKB(i);
         TObject *rc = RKC(i);
+        int taint = SAFE_IS_TAINTED_TWO(rb, rc);
         if (ttisnumber(rb) && ttisnumber(rc)) {
           setnvalue(ra, nvalue(rb) * nvalue(rc));
         }
         else
           Arith(L, ra, rb, rc, TM_MUL);
+        if (taint)
+          SAFE_TAINT(ra);
         break;
       }
       case OP_DIV: {
         TObject *rb = RKB(i);
         TObject *rc = RKC(i);
+        int taint = SAFE_IS_TAINTED_TWO(rb, rc);
         if (ttisnumber(rb) && ttisnumber(rc)) {
           setnvalue(ra, nvalue(rb) / nvalue(rc));
         }
         else
           Arith(L, ra, rb, rc, TM_DIV);
+        if (taint)
+          SAFE_TAINT(ra);
         break;
       }
       case OP_POW: {
+        int taint = SAFE_IS_TAINTED_TWO(RKB(i), RKC(i));
         Arith(L, ra, RKB(i), RKC(i), TM_POW);
+        if (taint)
+          SAFE_TAINT(ra);
         break;
       }
       case OP_UNM: {
@@ -583,6 +617,8 @@ StkId luaV_execute (lua_State *L) {
       case OP_NOT: {
         int res = l_isfalse(RB(i));  /* next assignment may change this value */
         setbvalue(ra, res);
+        if (SAFE_IS_TAINTED(RB(i)))
+          SAFE_TAINT(ra);
         break;
       }
       case OP_CONCAT: {
