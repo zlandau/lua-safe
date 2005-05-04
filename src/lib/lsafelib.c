@@ -20,7 +20,6 @@ static int safe_check_world_writable(lua_State *L, int idx) {
 LUALIB_API void safe_check_load (lua_State *L, int idx) {
   if (lua_gettaint(L, idx)) { 
     switch (lua_getsafelevel(L)) { 
-      case 4: 
       case 3: 
       case 2: 
 	/* XXX: Really should check if the DIRECTORY is world writable, not the file */
