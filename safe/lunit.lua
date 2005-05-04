@@ -327,6 +327,16 @@ function assert_error(msg, func)
 end
 
 
+function assert_error_match(msg, ret, func)
+    stats_inc("assertions")
+    if is_nil(func) then msg, ret, func = nil, msg, ret end
+    check_msg("assert_error", msg)
+    do_assert(is_function(func), "assert_error expects a function as the last argument but it was a "..type(func))
+    local ok, errmsg = pcall(func)
+    do_assert(ok == false, "error expected but no error occurred", msg)
+    do_assert(string.find(errmsg, ret) ~= nil, "error return code was not correct: `"..errmsg.."`", msg)
+end
+
 function assert_pass(msg, func)
   stats_inc("assertions")
   if is_nil(func) then func, msg = msg, nil end
