@@ -105,6 +105,7 @@ static void print_usage (void) {
   "  -e stat  execute string `stat'\n"
   "  -i       enter interactive mode after executing `script'\n"
   "  -l name  load and run library `name'\n"
+  "  -t num   set safety level to `num`\n"
   "  -v       show version information\n"
   "  --       stop handling options\n" ,
   progname);
@@ -351,6 +352,10 @@ static int handle_argv (char *argv[], int *interactive) {
           }
           if (load_file(filename))
             return 1;  /* stop if file fails */
+          break;
+        }
+        case 't': {
+          lua_setsafelevel(L, strtol(argv[++i], (char **)NULL, 10));
           break;
         }
         case 'c': {
