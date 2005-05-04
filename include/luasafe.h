@@ -14,6 +14,9 @@ extern void safe_check_load (lua_State *L, int idx);
 #define SAFE_CHECK_EXECUTE(L, idx) \
     {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 3) \
          luaL_error(L, "safety violation: cannot execute tainted value");}
+#define SAFE_CHECK_EVAL(L, idx) \
+    {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 1) \
+         luaL_error(L, "safety violation: cannot evaluate tainted value");}
 #define SAFE_CHECK_FILE_DATA(L, idx) \
     {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 3) \
 	luaL_error(L, "safety violation: cannot modify files with tainted value");}
