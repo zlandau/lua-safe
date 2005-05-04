@@ -18,8 +18,10 @@ extern void safe_check_load (lua_State *L, int idx);
     {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 1) \
          luaL_error(L, "safety violation: cannot evaluate tainted value");}
 #define SAFE_CHECK_FILE_DATA(L, idx) \
-    {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 3) \
-	luaL_error(L, "safety violation: cannot modify files with tainted value");}
+    {if (lua_gettaint(L, idx) && lua_getsafelevel(L) >= 1) \
+	luaL_error(L, "safety violation: cannot modify files with tainted value"); \
+     else if (lua_getsafelevel(L) >= 3) \
+         luaL_error(L, "safety violation: cannot modify files");}
 #define SAFE_CHECK_OS_EXIT(L) \
     {if (lua_getsafelevel(L) >= 4) \
          luaL_error(L, "safety violation: cannot call os.exit");}
