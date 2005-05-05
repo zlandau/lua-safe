@@ -25,4 +25,5 @@ end
 
 f = io.tmpfile() -- open this before we go to level 3
 setsafelevel(3)
-lunit.run()
+local ret = lunit.run()
+-- os.exit(ret)  -- unfortunately, we can't do this now

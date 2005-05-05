@@ -12,4 +12,5 @@ function testcase.test_taint()
 end
 
 setsafelevel(2)
-lunit.run()
+local ret = lunit.run()
+os.exit(ret)

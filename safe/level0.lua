@@ -24,4 +24,5 @@ function testcase.test_taint()
     lunit.assert_true(istainted(exp))
 end
 
-lunit.run()
+local ret = lunit.run()
+os.exit(ret)

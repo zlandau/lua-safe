@@ -34,4 +34,5 @@ function testcase.test_file()
 end
 
 setsafelevel(1)
-lunit.run()
+local ret = lunit.run()
+os.exit(ret)
