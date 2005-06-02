@@ -1,0 +1,3 @@
+* Taintness is removed by many operations.  For example, using many of the
+  string and math library funcions will remove taintedness.  Is there a good
+  way to handle this other than adding code all over the place?

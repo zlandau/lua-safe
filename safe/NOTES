@@ -1,1 +1,0 @@
-* Taintness is removed by many operations.  Should we favor taintness or minimal code changes?
