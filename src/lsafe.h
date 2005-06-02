@@ -1,6 +1,7 @@
 /*
-** $Id$
-*/
+ * VM-level Safety check maros
+ * Copyright (c) 2005 Zachary P. Landau <kapheine@divineinvasion.net>
+ */
 
 #ifndef lsafe_h
 #define lsafe_h

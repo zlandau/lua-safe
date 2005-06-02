@@ -1,4 +1,7 @@
-
+/*
+ * Safe check functions
+ * Copyright (c) 2005 Zachary P. Landau <kapheine@divineinvasion.net>
+ */
 
 #include <sys/stat.h>
 

@@ -1,5 +1,6 @@
-/**
- *
+/*
+ * API-Level Safety check macros
+ * Copyright (c) 2005 Zachary P. Landau <kapheine@divineinvasion.net>
  */
 
 #ifndef luasafe_h
